@@ -1,7 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  TrendingUp, Settings, Calendar, CreditCard, FileText, Package, Users, 
+  TrendingUp, Settings, Calendar, CreditCard, FileText, Phone, Bot, Users, 
   ChevronRight, X, LogOut 
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
@@ -17,7 +17,8 @@ const Sidebar = ({ isOpen, onToggle, user, adminRole }: { isOpen: boolean, onTog
     { name: 'Bookings', icon: <Calendar size={20} />, path: '/bookings' },
     { name: 'Payments', icon: <CreditCard size={20} />, path: '/payments' },
     { name: 'Invoices', icon: <FileText size={20} />, path: '/invoices' },
-    { name: 'Inventory', icon: <Package size={20} />, path: '/parts' },
+    { name: 'Advisor Numbers', icon: <Phone size={20} />, path: '/advisor-numbers' },
+    { name: 'Personality', icon: <Bot size={20} />, path: '/chatbot-personality' },
     ...(role === 'super admin' ? [{ name: 'Admins', icon: <Users size={20} />, path: '/admin-users' }] : []),
   ];
 

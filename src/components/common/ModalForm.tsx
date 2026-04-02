@@ -207,15 +207,21 @@ const ModalForm = ({ title, fields, initialData, onSave, onCancel }: any) => {
                   disabled={!!f.disabled}
                 >
                   <option value="" disabled>Select an option...</option>
-                  {(typeof f.options === 'function' ? f.options(formData) : f.options).map((opt: any) => (
-                    <option key={opt} value={opt}>
-                      {(() => {
-                        const label = String(opt).replace(/_/g, ' ');
-                        // Default keeps prior behavior; allow callers to disable uppercasing.
-                        return f.uppercaseOptions === false ? label : label.toUpperCase();
-                      })()}
-                    </option>
-                  ))}
+                  {(typeof f.options === 'function' ? f.options(formData) : f.options).map((opt: any) => {
+                    // Support both legacy `string[]` options and `{ value, label }` options.
+                    const value = opt && typeof opt === 'object' && 'value' in opt ? opt.value : opt;
+                    const display = opt && typeof opt === 'object' && 'label' in opt ? opt.label : opt;
+                    const label = String(display).replace(/_/g, ' ');
+
+                    // Default keeps prior behavior; allow callers to disable uppercasing.
+                    const text = f.uppercaseOptions === false ? label : label.toUpperCase();
+
+                    return (
+                      <option key={String(value)} value={value}>
+                        {text}
+                      </option>
+                    );
+                  })}
                 </select>
               ) : f.type === 'dynamic_payload' ? (
                 renderDynamicPayload(f)

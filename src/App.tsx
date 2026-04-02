@@ -15,7 +15,8 @@ import PendingApprovalView from './components/common/PendingApprovalView';
 import GenericTableView from './components/common/GenericTableView';
 import DashboardView from './components/core/DashboardView';
 import CategoriesView from './components/core/CategoriesView';
-import InventoryView from './components/core/InventoryView';
+import AdvisorNumbersView from './components/core/AdvisorNumbersView';
+import ChatbotPersonalityView from './components/core/ChatbotPersonalityView';
 import { BOOKING_SUMMARY_COLUMNS } from './constants/bookingColumns';
 import BookingDetailContent from './components/common/BookingDetailContent';
 import { PAYMENT_SUMMARY_COLUMNS } from './constants/paymentColumns';
@@ -185,7 +186,8 @@ export default function App() {
                     { key: 'created_at', label: 'Received' },
                   ]}
                 />} />
-                <Route path="/parts" element={<InventoryView showToast={showToast} />} />
+                <Route path="/advisor-numbers" element={<AdvisorNumbersView showToast={showToast} />} />
+                <Route path="/chatbot-personality" element={<ChatbotPersonalityView showToast={showToast} />} />
                 <Route
                   path="/admin-users"
                   element={

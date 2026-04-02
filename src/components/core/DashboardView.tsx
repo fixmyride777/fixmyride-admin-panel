@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { 
-  Calendar, Package, CreditCard, TrendingUp, AlertCircle, 
+  Calendar, Phone, CreditCard, TrendingUp, AlertCircle, 
   Loader2, CalendarCheck, ChevronRight 
 } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -12,7 +12,7 @@ import type { FixMyRideUser, DashboardStats } from '../../types/index';
 const DashboardView = ({ user }: { user: FixMyRideUser | null }) => {
   const isSupabaseLive = !supabaseUrl.includes('placeholder');
   
-  const [stats, setStats] = useState<DashboardStats>({ bookings: 0, services: 0, revenue: 0, parts: 0 });
+  const [stats, setStats] = useState<DashboardStats>({ bookings: 0, services: 0, revenue: 0, advisorNumbers: 0 });
   const [recent, setRecent] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const adminName = user?.email?.split('@')[0] || 'Admin';
@@ -20,7 +20,7 @@ const DashboardView = ({ user }: { user: FixMyRideUser | null }) => {
   useEffect(() => {
     async function fetchStats() {
       if (!isSupabaseLive) {
-        setStats({ bookings: 0, services: 0, revenue: 0, parts: 0 });
+        setStats({ bookings: 0, services: 0, revenue: 0, advisorNumbers: 0 });
         setRecent([]);
         setLoading(false);
         return;
@@ -32,22 +32,22 @@ const DashboardView = ({ user }: { user: FixMyRideUser | null }) => {
           (supabase as any).from('service_categories').select('*', { count: 'exact', head: true }),
           (supabase as any).from('payment_records').select('amount'),
           (supabase as any).from('booking_records').select('*').limit(3).order('created_at', { ascending: false }),
-          (supabase as any).from('parts').select('*', { count: 'exact', head: true })
+          (supabase as any).from('advisor_numbers').select('*', { count: 'exact', head: true })
         ]);
 
-        const [bookings, services, payments, latest, parts]: any = await Promise.race([dataFetchPromise, timeoutPromise]);
+        const [bookings, services, payments, latest, advisorNumbers]: any = await Promise.race([dataFetchPromise, timeoutPromise]);
 
         const totalRevenue = (payments.data || []).reduce((acc: number, curr: any) => acc + (Number(curr.amount) || 0), 0);
         setStats({
           bookings: bookings.count || 0,
           services: services.count || 0,
           revenue: totalRevenue,
-          parts: parts.count || 0
+          advisorNumbers: advisorNumbers.count || 0
         });
         setRecent(latest.data || []);
       } catch (err) {
         console.warn("Using empty dashboard state due to connection error:", err);
-        setStats({ bookings: 0, services: 0, revenue: 0, parts: 0 });
+        setStats({ bookings: 0, services: 0, revenue: 0, advisorNumbers: 0 });
         setRecent([]);
       } finally {
         setLoading(false);
@@ -84,11 +84,11 @@ const DashboardView = ({ user }: { user: FixMyRideUser | null }) => {
           </div>
         </div>
         <div className="stat-card">
-          <div className="stat-icon" style={{ background: 'rgba(37, 99, 235, 0.1)', color: '#2563eb' }}><Package size={28} /></div>
+          <div className="stat-icon" style={{ background: 'rgba(37, 99, 235, 0.1)', color: '#2563eb' }}><Phone size={28} /></div>
           <div className="stat-info">
-            <h3>Parts Inventory</h3>
-            <div className="value">{stats.parts.toLocaleString()}</div>
-            <div style={{ color: '#16a34a', fontSize: '11px', fontWeight: '700' }}>In stock</div>
+            <h3>Advisor Numbers</h3>
+            <div className="value">{stats.advisorNumbers.toLocaleString()}</div>
+            <div style={{ color: '#16a34a', fontSize: '11px', fontWeight: '700' }}>Configured</div>
           </div>
         </div>
         <div className="stat-card">

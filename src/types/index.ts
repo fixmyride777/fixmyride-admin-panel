@@ -20,7 +20,7 @@ export interface DashboardStats {
   bookings: number;
   services: number;
   revenue: number;
-  parts: number;
+  advisorNumbers: number;
 }
 
 export interface TableColumn {

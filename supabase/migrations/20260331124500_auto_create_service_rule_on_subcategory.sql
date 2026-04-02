@@ -49,8 +49,7 @@ BEGIN
     true,
     jsonb_build_array(
       'Require vehicle make, model, and year',
-      'Check the parts',
-      'Explain the price to customers',
+      'Explain the price to customer',
       'Offer booking link'
     )
   )

@@ -265,6 +265,7 @@ const CategoriesView = ({ showToast }: any) => {
                       fields={[
                         { name: 'name', label: 'Service Name' },
                         { name: 'code', label: 'Service Code' },
+                        { name: 'price', label: 'Price (AED)', type: 'number' },
                         { name: 'is_active', label: 'Active', type: 'checkbox' }
                       ]}
                       onSave={async (formData: any) => {
@@ -298,11 +299,18 @@ const CategoriesView = ({ showToast }: any) => {
                           return;
                         }
 
+                        const priceRaw = formData?.price;
+                        const price =
+                          priceRaw === '' || priceRaw === undefined || priceRaw === null
+                            ? null
+                            : Number(priceRaw);
+
                         const { data: sub, error: subError } = await (supabase as any)
                           .from('service_subcategories')
                           .insert([{
                             ...formData,
                             code: nextCode,
+                            price,
                             // Always force the correct FK
                             category_id: categoryId
                           }])
@@ -328,10 +336,19 @@ const CategoriesView = ({ showToast }: any) => {
                       fields={[
                         { name: 'name', label: 'Service Name' },
                         { name: 'code', label: 'Service Code' },
+                        { name: 'price', label: 'Price (AED)', type: 'number' },
                         { name: 'is_active', label: 'Active', type: 'checkbox' },
                       ]}
                       onSave={async (formData: any) => {
-                        const { id, ...payload } = formData || {};
+                        const { id, ...rest } = formData || {};
+                        const priceRaw = rest?.price;
+                        const payload = {
+                          ...rest,
+                          price:
+                            priceRaw === '' || priceRaw === undefined || priceRaw === null
+                              ? null
+                              : Number(priceRaw),
+                        };
                         const { data: updated, error } = await (supabase as any)
                           .from('service_subcategories')
                           .update(payload)
@@ -358,6 +375,7 @@ const CategoriesView = ({ showToast }: any) => {
                             <tr>
                               <th>Service Name</th>
                               <th>Code</th>
+                              <th>Price</th>
                               <th>Status</th>
                               <th>Configuration</th>
                               <th style={{ width: '120px' }}>Edit</th>
@@ -368,6 +386,11 @@ const CategoriesView = ({ showToast }: any) => {
                               <tr key={sub.id || `sub-${idx}`}>
                                 <td style={{ fontWeight: '500' }}>{sub.name}</td>
                                 <td>{sub.code}</td>
+                                <td style={{ fontWeight: '600', whiteSpace: 'nowrap' }}>
+                                  {sub.price != null && sub.price !== ''
+                                    ? `AED ${Number(sub.price).toLocaleString()}`
+                                    : '—'}
+                                </td>
                                 <td onClick={(e) => {
                                   e.stopPropagation();
                                   const newStatus = !sub.is_active;
@@ -416,7 +439,7 @@ const CategoriesView = ({ showToast }: any) => {
                                 </td>
                               </tr>
                             ))}
-                            {subcategories.length === 0 && <tr><td colSpan={5} style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>No subcategories found</td></tr>}
+                            {subcategories.length === 0 && <tr><td colSpan={6} style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>No subcategories found</td></tr>}
                           </tbody>
                         </table>
                       </div>
