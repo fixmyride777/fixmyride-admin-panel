@@ -192,7 +192,7 @@ const InvoiceLineItemsCell = ({ value }: { value: unknown }) => {
               className="modal-content invoice-line-items-modal"
               style={{
                 width: '100%',
-                maxWidth: 'min(640px, 100%)',
+                maxWidth: 'min(780px, 100%)',
                 minWidth: 0,
                 maxHeight: '85vh',
                 overflow: 'auto',

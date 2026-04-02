@@ -290,7 +290,7 @@ const GenericTableView = ({ title, tableName, columns, fields, primaryKey = 'id'
           >
             <motion.div
               className="modal-content"
-              style={{ maxWidth: '640px', width: '100%', maxHeight: '90vh', overflow: 'auto', padding: 0 }}
+              style={{ maxWidth: '780px', width: '100%', maxHeight: '90vh', overflow: 'auto', padding: 0 }}
               initial={{ scale: 0.96, opacity: 0, y: 12 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.96, opacity: 0, y: 12 }}

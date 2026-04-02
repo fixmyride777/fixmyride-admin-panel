@@ -163,7 +163,7 @@ const ModalForm = ({ title, fields, initialData, onSave, onCancel }: any) => {
     <div className="modal-overlay">
       <motion.div
         className="modal-content"
-        style={{ maxWidth: '500px', padding: 0 }}
+        style={{ maxWidth: '580px', padding: 0 }}
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         onClick={e => e.stopPropagation()}

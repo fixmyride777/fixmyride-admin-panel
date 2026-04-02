@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from 'react';
-import { Loader2, ChevronRight, XCircle, GripVertical, Plus, Trash2 } from 'lucide-react';
+import { Loader2, ChevronRight, X, XCircle, GripVertical, Plus, Trash2 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 
 function normalizeActions(raw: any): string[] {
@@ -16,7 +16,7 @@ function normalizeActions(raw: any): string[] {
   return [];
 }
 
-const RuleManager = ({ subcategory, onBack, showToast }: any) => {
+const RuleManager = ({ subcategory, onBack, onCloseModal, showToast }: any) => {
   const [rule, setRule] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [actionsDraft, setActionsDraft] = useState<string[]>([]);
@@ -117,47 +117,87 @@ const RuleManager = ({ subcategory, onBack, showToast }: any) => {
     return next;
   };
 
-  if (loading) return <div style={{ display: 'flex', justifyContent: 'center', padding: '100px' }}><Loader2 className="animate-spin" size={40} color="var(--primary)" /></div>;
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flex: 1, minHeight: 200, padding: 24 }}>
+        <Loader2 className="animate-spin" size={40} color="var(--primary)" />
+      </div>
+    );
+  }
+
+  const closeAll = typeof onCloseModal === 'function' ? onCloseModal : onBack;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-      <div style={{ 
-        position: 'sticky', 
-        top: '-40px', 
-        zIndex: 100, 
-        background: 'white', 
-        margin: '-40px -40px 10px', 
-        padding: '24px 40px 10px', 
-        display: 'flex', 
-        flexDirection: 'column', 
-        gap: '16px', 
-        borderBottom: '1px solid #f1f5f9',
-        boxShadow: '0 4px 12px rgba(0,0,0,0.05)'
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <button className="btn-remove" style={{ background: 'var(--border)', color: 'var(--text)' }} onClick={onBack}>
-            <ChevronRight size={20} style={{ transform: 'rotate(180deg)' }} />
-          </button>
-          <h2 style={{ fontSize: '18px', fontWeight: '800', color: '#0f172a', textTransform: 'capitalize', margin: 0 }}>{subcategory.name} Rules</h2>
-          </div>
+    <div
+      className="rule-manager-root"
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        flex: 1,
+        minHeight: 0,
+        minWidth: 0,
+        overflow: 'hidden',
+      }}
+    >
+      <header
+        style={{
+          flexShrink: 0,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 12,
+          padding: '16px 20px',
+          borderBottom: '1px solid var(--border)',
+          background: 'white',
+          zIndex: 10,
+        }}
+      >
+        <button
+          type="button"
+          className="btn-remove"
+          style={{ background: 'var(--border)', color: 'var(--text)', flexShrink: 0 }}
+          onClick={onBack}
+          aria-label="Back to subcategories"
+          title="Back"
+        >
+          <ChevronRight size={20} style={{ transform: 'rotate(180deg)' }} />
+        </button>
+        <h2
+          style={{
+            fontSize: '18px',
+            fontWeight: 800,
+            color: '#0f172a',
+            textTransform: 'capitalize',
+            margin: 0,
+            flex: 1,
+            minWidth: 0,
+            lineHeight: 1.3,
+          }}
+        >
+          {subcategory.name} Rules
+        </h2>
+        <button
+          type="button"
+          className="modal-close modal-close--inline"
+          aria-label="Close"
+          title="Close"
+          onClick={closeAll}
+        >
+          <X size={20} />
+        </button>
+      </header>
 
-          {/* Close modal (top-right) */}
-          <button
-            type="button"
-            className="modal-close"
-            aria-label="Close"
-            title="Close"
-            onClick={onBack}
-            style={{ position: 'static' }}
-          >
-            <ChevronRight size={18} style={{ transform: 'rotate(180deg)' }} />
-          </button>
-        </div>
-      </div>
-
-      <div style={{ display: 'flex', gap: '40px' }}>
-        <div className="card" style={{ flex: 1, minHeight: '400px', borderTop: 'none', borderRadius: '0 0 16px 16px' }}>
+      <div
+        style={{
+          flex: 1,
+          minHeight: 0,
+          minWidth: 0,
+          overflowY: 'auto',
+          overflowX: 'hidden',
+          padding: '20px 24px 24px',
+          WebkitOverflowScrolling: 'touch',
+        }}
+      >
+        <div className="card" style={{ minWidth: 0, borderRadius: '16px' }}>
           {!rule && (
             <div style={{ padding: '60px', textAlign: 'center' }}>
               <div style={{ color: '#ef4444', marginBottom: '16px' }}><XCircle size={48} /></div>
@@ -173,8 +213,15 @@ const RuleManager = ({ subcategory, onBack, showToast }: any) => {
             </div>
           )}
           {rule && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', minWidth: 0 }}>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)',
+                  gap: '24px',
+                  minWidth: 0,
+                }}
+              >
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                   <label style={{ fontSize: '14px', fontWeight: '600', color: 'var(--text-muted)' }}>Category Code</label>
                   <input

@@ -590,8 +590,8 @@ table tbody td {
   background: white;
   padding: 40px;
   border-radius: 16px;
-  width: 90%;
-  max-width: 900px;
+  width: 92%;
+  max-width: 1100px;
   max-height: 90vh;
   overflow-y: auto;
   position: relative;
@@ -621,6 +621,98 @@ table tbody td {
 .modal-close:hover {
   color: var(--primary);
   transform: rotate(90deg);
+}
+
+/* Category subcategories modal: fixed chrome + scrollable body (close button does not scroll away) */
+.modal-content.modal-content--structured {
+  display: flex;
+  flex-direction: column;
+  max-height: min(90vh, 1100px);
+  padding: 0;
+  overflow: hidden;
+}
+
+.modal-structured__header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 20px 16px 24px;
+  border-bottom: 1px solid var(--border);
+  background: white;
+  z-index: 20;
+}
+
+.modal-structured__header-text h2 {
+  margin: 0 0 6px 0;
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.25;
+}
+
+.modal-structured__header-text p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.modal-structured__header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.modal-close.modal-close--inline {
+  position: static;
+  flex-shrink: 0;
+}
+
+.modal-structured__body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 16px 24px 24px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.modal-structured__body--flush {
+  padding: 0;
+}
+
+/* Rule editor: single scroll area inside RuleManager, no double chrome with parent */
+.modal-structured__body--rule-manager {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+}
+
+.modal-structured__toolbar {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  background: white;
+  z-index: 20;
+}
+
+@media (max-width: 560px) {
+  .modal-structured__header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .modal-structured__header-actions {
+    justify-content: space-between;
+  }
 }
 
 /* Booking detail modal: real column names (not Field / Value), one data row */

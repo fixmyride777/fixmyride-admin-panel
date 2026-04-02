@@ -28,7 +28,7 @@ export default function ConfirmDialog({
     <div className="modal-overlay" onClick={onClose}>
       <motion.div
         className="modal-content"
-        style={{ maxWidth: '520px', padding: 0 }}
+        style={{ maxWidth: '600px', padding: 0 }}
         initial={{ scale: 0.96, opacity: 0, y: 10 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
         exit={{ scale: 0.96, opacity: 0, y: 10 }}

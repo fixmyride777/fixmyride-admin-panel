@@ -8,6 +8,12 @@ import ModalForm from '../common/ModalForm';
 import RuleManager from './RuleManager';
 import ConfirmDialog from '../common/ConfirmDialog';
 
+function formatSubcategoryPrice(val: unknown): string {
+  if (val === null || val === undefined || val === '') return '—';
+  const n = typeof val === 'number' ? val : Number(val);
+  return Number.isFinite(n) ? `AED ${n.toLocaleString()}` : '—';
+}
+
 const CategoriesView = ({ showToast }: any) => {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -235,30 +241,45 @@ const CategoriesView = ({ showToast }: any) => {
             exit={{ opacity: 0 }}
           >
             <motion.div
-              className="modal-content"
+              className="modal-content modal-content--structured"
               initial={{ scale: 0.9, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
               onClick={e => e.stopPropagation()}
             >
-              <button className="modal-close" onClick={closeCategoryModal}><X /></button>
-
               {selectedSubcategory ? (
-                <RuleManager
-                  subcategory={selectedSubcategory}
-                  onBack={() => setSelectedSubcategory(null)}
-                  showToast={showToast}
-                />
+                <div className="modal-structured__body modal-structured__body--rule-manager">
+                  <RuleManager
+                    subcategory={selectedSubcategory}
+                    onBack={() => setSelectedSubcategory(null)}
+                    onCloseModal={closeCategoryModal}
+                    showToast={showToast}
+                  />
+                </div>
               ) : (
                 <>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', position: 'sticky', top: 0, zIndex: 10, background: 'white', padding: '10px 0' }}>
-                    <h2 style={{ margin: 0, fontSize: '18px' }}>{selectedCategory.name} Subcategories</h2>
-                    <button className="btn-primary" onClick={() => setIsSubAdding(true)} style={{ padding: '8px 20px', fontSize: '13px' }}>
-                      <Plus size={16} /> Add Subcategory
-                    </button>
-                  </div>
-                  <p style={{ color: 'var(--text-muted)', marginBottom: '24px' }}>List of all services under {selectedCategory.name}</p>
+                  <header className="modal-structured__header">
+                    <div className="modal-structured__header-text">
+                      <h2>{selectedCategory.name} Subcategories</h2>
+                      <p>List of all services under {selectedCategory.name}</p>
+                    </div>
+                    <div className="modal-structured__header-actions">
+                      <button className="btn-primary" type="button" onClick={() => setIsSubAdding(true)} style={{ padding: '8px 18px', fontSize: '13px', whiteSpace: 'nowrap' }}>
+                        <Plus size={16} /> Add Subcategory
+                      </button>
+                      <button
+                        type="button"
+                        className="modal-close modal-close--inline"
+                        onClick={closeCategoryModal}
+                        aria-label="Close"
+                        title="Close"
+                      >
+                        <X size={20} />
+                      </button>
+                    </div>
+                  </header>
 
+                  <div className="modal-structured__body">
                   {isSubAdding && (
                     <ModalForm
                       title="Subcategory"
@@ -387,9 +408,7 @@ const CategoriesView = ({ showToast }: any) => {
                                 <td style={{ fontWeight: '500' }}>{sub.name}</td>
                                 <td>{sub.code}</td>
                                 <td style={{ fontWeight: '600', whiteSpace: 'nowrap' }}>
-                                  {sub.price != null && sub.price !== ''
-                                    ? `AED ${Number(sub.price).toLocaleString()}`
-                                    : '—'}
+                                  {formatSubcategoryPrice(sub.price)}
                                 </td>
                                 <td onClick={(e) => {
                                   e.stopPropagation();
@@ -445,6 +464,7 @@ const CategoriesView = ({ showToast }: any) => {
                       </div>
                     </div>
                   )}
+                  </div>
                 </>
               )}
             </motion.div>

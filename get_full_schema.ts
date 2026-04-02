@@ -30,9 +30,7 @@ async function getFullSchema() {
     'admin_users', 
     'service_categories', 
     'service_subcategories', 
-    'service_rules', 
-    'rule_conditions', 
-    'rule_actions'
+    'service_rules',
   ];
 
   for (const table of knownTables) {
