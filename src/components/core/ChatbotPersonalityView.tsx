@@ -6,8 +6,8 @@ import Header from '../common/Header';
 
 const TABLE = 'chatbot_personality';
 
-/** Prefer these keys when reading/writing (matches migration `instructions`). */
-const TEXT_KEYS = ['instructions', 'content', 'personality', 'prompt', 'text'] as const;
+/** `text` first — live DB uses this column for personality body. */
+const TEXT_KEYS = ['text', 'instructions', 'content', 'personality', 'prompt'] as const;
 
 function pickText(row: Record<string, unknown> | null): string {
   if (!row) return '';
@@ -19,11 +19,11 @@ function pickText(row: Record<string, unknown> | null): string {
 }
 
 function textColumnForRow(row: Record<string, unknown> | null): string {
-  if (!row) return 'instructions';
+  if (!row) return 'text';
   for (const k of TEXT_KEYS) {
     if (Object.prototype.hasOwnProperty.call(row, k)) return k;
   }
-  return 'instructions';
+  return 'text';
 }
 
 const ChatbotPersonalityView = ({
@@ -35,7 +35,7 @@ const ChatbotPersonalityView = ({
   const [saving, setSaving] = useState(false);
   const [text, setText] = useState('');
   const [rowId, setRowId] = useState<string | null>(null);
-  const [textColumn, setTextColumn] = useState<string>('instructions');
+  const [textColumn, setTextColumn] = useState<string>('text');
 
   const load = useCallback(async () => {
     if (supabaseUrl.includes('placeholder')) {

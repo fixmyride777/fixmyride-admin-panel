@@ -1,21 +1,10 @@
--- Chatbot personality prompts (admin-managed).
--- If `chatbot_personality` already exists with different columns, align the admin UI
--- (`ChatbotPersonalityView.tsx`) or add missing columns in Supabase.
-
-CREATE TABLE IF NOT EXISTS public.chatbot_personality (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  created_at timestamptz NOT NULL DEFAULT now(),
-  updated_at timestamptz NOT NULL DEFAULT now(),
-  name text,
-  instructions text NOT NULL DEFAULT '',
-  is_active boolean NOT NULL DEFAULT true
-);
-
-CREATE INDEX IF NOT EXISTS chatbot_personality_active_idx ON public.chatbot_personality (is_active);
-
-ALTER TABLE public.chatbot_personality ENABLE ROW LEVEL SECURITY;
+-- Fix: "new row violates row-level security policy" on chatbot_personality
+-- Use explicit INSERT/UPDATE/DELETE policies (more reliable than FOR ALL with PostgREST)
+-- and ensure the authenticated role can write the table.
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE public.chatbot_personality TO authenticated;
+
+ALTER TABLE public.chatbot_personality ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS chatbot_personality_read ON public.chatbot_personality;
 DROP POLICY IF EXISTS chatbot_personality_write ON public.chatbot_personality;
