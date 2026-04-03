@@ -1,13 +1,6 @@
--- Fix service_rules uniqueness so subcategory codes can repeat across categories.
--- service_subcategories has UNIQUE(category_id, code), so "code" is not globally unique.
--- Therefore service_rules should also be unique per category+subcategory.
+-- Reapply 2-default trigger (no "Offer booking link") for databases that ran an older 214.
+-- Safe to run multiple times.
 
--- 1) Replace the unique index
-DROP INDEX IF EXISTS public.service_rules_subcategory_code_key;
-CREATE UNIQUE INDEX IF NOT EXISTS service_rules_category_subcategory_key
-  ON public.service_rules (category_code, subcategory_code);
-
--- 2) Ensure the trigger function upserts using the same unique key
 CREATE OR REPLACE FUNCTION public.handle_new_service_subcategory()
 RETURNS trigger
 LANGUAGE plpgsql
@@ -43,13 +36,20 @@ BEGIN
   )
   ON CONFLICT (category_code, subcategory_code)
   DO UPDATE SET
+    category_code = EXCLUDED.category_code,
     title = EXCLUDED.title,
     is_active = EXCLUDED.is_active,
-    -- Keep existing description/actions if already customized
     description = COALESCE(public.service_rules.description, EXCLUDED.description),
-    actions = COALESCE(public.service_rules.actions, EXCLUDED.actions);
+    actions = (
+      SELECT
+        CASE
+          WHEN ea IS NULL THEN EXCLUDED.actions
+          WHEN ea = '[]'::jsonb THEN EXCLUDED.actions
+          ELSE ea
+        END
+      FROM (SELECT public.service_rules.actions AS ea) s
+    );
 
   RETURN NEW;
 END;
 $$;
-

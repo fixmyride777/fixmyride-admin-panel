@@ -49,8 +49,7 @@ BEGIN
     true,
     jsonb_build_array(
       'Require vehicle make, model, and year',
-      'Explain the price to customer',
-      'Offer booking link'
+      'Explain the price to customer'
     )
   )
   ON CONFLICT (category_code, subcategory_code)

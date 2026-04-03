@@ -1,4 +1,4 @@
--- New subcategories: default rule actions are 3 (no inventory / parts check).
+-- New subcategories: default rule actions are 2 (no inventory / parts check, no booking link).
 CREATE OR REPLACE FUNCTION public.handle_new_service_subcategory()
 RETURNS trigger
 LANGUAGE plpgsql
@@ -29,8 +29,7 @@ BEGIN
     true,
     jsonb_build_array(
       'Require vehicle make, model, and year',
-      'Explain the price to customer',
-      'Offer booking link'
+      'Explain the price to customer'
     )
   )
   ON CONFLICT (category_code, subcategory_code)
