@@ -8,10 +8,25 @@ import ModalForm from '../common/ModalForm';
 import RuleManager from './RuleManager';
 import ConfirmDialog from '../common/ConfirmDialog';
 
+/** DB column `price` is text; values may be plain numbers, "AED …", commas, or free-form notes. */
 function formatSubcategoryPrice(val: unknown): string {
-  if (val === null || val === undefined || val === '') return '—';
-  const n = typeof val === 'number' ? val : Number(val);
-  return Number.isFinite(n) ? `AED ${n.toLocaleString()}` : '—';
+  if (val === null || val === undefined) return '—';
+  const raw = String(val).trim();
+  if (raw === '') return '—';
+
+  const cleaned = raw.replace(/,/g, '').replace(/^AED\s*/i, '').trim();
+  if (cleaned === '') return raw;
+
+  const n = Number(cleaned);
+  if (Number.isFinite(n)) return `AED ${n.toLocaleString()}`;
+
+  return raw;
+}
+
+function normalizeSubcategoryPriceForDb(priceRaw: unknown): string | null {
+  if (priceRaw === '' || priceRaw === undefined || priceRaw === null) return null;
+  const s = String(priceRaw).trim();
+  return s === '' ? null : s;
 }
 
 const CategoriesView = ({ showToast }: any) => {
@@ -286,7 +301,7 @@ const CategoriesView = ({ showToast }: any) => {
                       fields={[
                         { name: 'name', label: 'Service Name' },
                         { name: 'code', label: 'Service Code' },
-                        { name: 'price', label: 'Price (AED)', type: 'number' },
+                        { name: 'price', label: 'Price (AED)', placeholder: 'e.g. 350 or leave empty' },
                         { name: 'is_active', label: 'Active', type: 'checkbox' }
                       ]}
                       onSave={async (formData: any) => {
@@ -320,11 +335,7 @@ const CategoriesView = ({ showToast }: any) => {
                           return;
                         }
 
-                        const priceRaw = formData?.price;
-                        const price =
-                          priceRaw === '' || priceRaw === undefined || priceRaw === null
-                            ? null
-                            : Number(priceRaw);
+                        const price = normalizeSubcategoryPriceForDb(formData?.price);
 
                         const { data: sub, error: subError } = await (supabase as any)
                           .from('service_subcategories')
@@ -357,18 +368,14 @@ const CategoriesView = ({ showToast }: any) => {
                       fields={[
                         { name: 'name', label: 'Service Name' },
                         { name: 'code', label: 'Service Code' },
-                        { name: 'price', label: 'Price (AED)', type: 'number' },
+                        { name: 'price', label: 'Price (AED)', placeholder: 'e.g. 350 or leave empty' },
                         { name: 'is_active', label: 'Active', type: 'checkbox' },
                       ]}
                       onSave={async (formData: any) => {
                         const { id, ...rest } = formData || {};
-                        const priceRaw = rest?.price;
                         const payload = {
                           ...rest,
-                          price:
-                            priceRaw === '' || priceRaw === undefined || priceRaw === null
-                              ? null
-                              : Number(priceRaw),
+                          price: normalizeSubcategoryPriceForDb(rest?.price),
                         };
                         const { data: updated, error } = await (supabase as any)
                           .from('service_subcategories')

@@ -230,7 +230,7 @@ const ModalForm = ({ title, fields, initialData, onSave, onCancel }: any) => {
                   name={f.name}
                   value={formData[f.name] || ''}
                   onChange={handleChange}
-                  placeholder={f.label}
+                  placeholder={f.placeholder ?? f.label}
                   className="form-input"
                   style={{ width: '100%', marginBottom: 0, minHeight: '120px', padding: '12px', resize: 'vertical', fontFamily: 'monospace', fontSize: '13px' }}
                   disabled={!!f.disabled}
@@ -239,9 +239,9 @@ const ModalForm = ({ title, fields, initialData, onSave, onCancel }: any) => {
                 <input
                   type={f.type || 'text'}
                   name={f.name}
-                  value={formData[f.name] || ''}
+                  value={formData[f.name] ?? ''}
                   onChange={handleChange}
-                  placeholder={f.label}
+                  placeholder={f.placeholder ?? f.label}
                   className="form-input"
                   style={{ width: '100%', marginBottom: 0 }}
                   disabled={!!f.disabled}

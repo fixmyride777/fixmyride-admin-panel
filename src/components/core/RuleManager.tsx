@@ -1,4 +1,5 @@
 import { useMemo, useState, useEffect } from 'react';
+import type { CSSProperties } from 'react';
 import { Loader2, ChevronRight, X, XCircle, GripVertical, Plus, Trash2 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 
@@ -15,6 +16,14 @@ function normalizeActions(raw: any): string[] {
   }
   return [];
 }
+
+const readonlyCodeFieldStyle: CSSProperties = {
+  width: '100%',
+  marginBottom: 0,
+  background: '#f1f5f9',
+  color: 'var(--text-main)',
+  cursor: 'default',
+};
 
 const RuleManager = ({ subcategory, onBack, onCloseModal, showToast }: any) => {
   const [rule, setRule] = useState<any>(null);
@@ -226,20 +235,24 @@ const RuleManager = ({ subcategory, onBack, onCloseModal, showToast }: any) => {
                   <label style={{ fontSize: '14px', fontWeight: '600', color: 'var(--text-muted)' }}>Category Code</label>
                   <input
                     type="text"
+                    readOnly
+                    tabIndex={-1}
+                    aria-readonly
                     value={rule.category_code || ''}
-                    onChange={(e) => handleUpdate('category_code', e.target.value)}
                     className="search-bar"
-                    style={{ width: '100%', marginBottom: 0 }}
+                    style={readonlyCodeFieldStyle}
                   />
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                   <label style={{ fontSize: '14px', fontWeight: '600', color: 'var(--text-muted)' }}>Subcategory Code</label>
                   <input
                     type="text"
+                    readOnly
+                    tabIndex={-1}
+                    aria-readonly
                     value={rule.subcategory_code || ''}
-                    onChange={(e) => handleUpdate('subcategory_code', e.target.value)}
                     className="search-bar"
-                    style={{ width: '100%', marginBottom: 0 }}
+                    style={readonlyCodeFieldStyle}
                   />
                 </div>
 

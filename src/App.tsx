@@ -134,7 +134,13 @@ export default function App() {
               </button>
             </header>
 
-            <Sidebar isOpen={isSidebarOpen} onToggle={setIsSidebarOpen} user={user} adminRole={adminProfile?.role} />
+            <Sidebar
+              isOpen={isSidebarOpen}
+              onToggle={setIsSidebarOpen}
+              user={user}
+              adminRole={adminProfile?.role}
+              showToast={showToast}
+            />
             
             <main className="main-content">
               <Routes>

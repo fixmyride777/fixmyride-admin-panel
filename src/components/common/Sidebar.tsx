@@ -1,13 +1,28 @@
+import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  TrendingUp, Settings, Calendar, CreditCard, FileText, Phone, Bot, Users, 
-  ChevronRight, X, LogOut 
+import {
+  TrendingUp, Settings, Calendar, CreditCard, FileText, Phone, Bot, Users,
+  ChevronRight, X, LogOut, KeyRound,
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
-import type { FixMyRideUser, NavItem } from '../../types/index';
+import type { FixMyRideUser, NavItem, ToastType } from '../../types/index';
+import ChangePasswordModal from './ChangePasswordModal';
 
-const Sidebar = ({ isOpen, onToggle, user, adminRole }: { isOpen: boolean, onToggle: (open: boolean) => void, user: FixMyRideUser | null, adminRole?: string }) => {
+const Sidebar = ({
+  isOpen,
+  onToggle,
+  user,
+  adminRole,
+  showToast,
+}: {
+  isOpen: boolean;
+  onToggle: (open: boolean) => void;
+  user: FixMyRideUser | null;
+  adminRole?: string;
+  showToast?: (message: string, type?: ToastType) => void;
+}) => {
+  const [changePasswordOpen, setChangePasswordOpen] = useState(false);
   const location = useLocation();
   const role = String(adminRole || '').trim().toLowerCase();
 
@@ -79,26 +94,54 @@ const Sidebar = ({ isOpen, onToggle, user, adminRole }: { isOpen: boolean, onTog
               </div>
             </div>
           </div>
-          <button 
+          <button
+            type="button"
+            onClick={() => setChangePasswordOpen(true)}
+            style={{
+              width: '100%',
+              padding: '10px',
+              borderRadius: '8px',
+              background: 'rgba(59, 130, 246, 0.08)',
+              color: 'var(--primary)',
+              fontSize: '13px',
+              fontWeight: '700',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px',
+            }}
+          >
+            <KeyRound size={16} /> Change password
+          </button>
+          <button
+            type="button"
             onClick={() => supabase.auth.signOut()}
-            style={{ 
-              width: '100%', 
-              padding: '10px', 
-              borderRadius: '8px', 
-              background: 'rgba(239, 68, 68, 0.1)', 
-              color: '#ef4444', 
-              fontSize: '13px', 
-              fontWeight: '700', 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'center', 
-              gap: '8px' 
+            style={{
+              width: '100%',
+              padding: '10px',
+              borderRadius: '8px',
+              background: 'rgba(239, 68, 68, 0.1)',
+              color: '#ef4444',
+              fontSize: '13px',
+              fontWeight: '700',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px',
             }}
           >
             <LogOut size={16} /> Sign Out
           </button>
         </div>
       </div>
+
+      {showToast && (
+        <ChangePasswordModal
+          isOpen={changePasswordOpen}
+          onClose={() => setChangePasswordOpen(false)}
+          showToast={showToast}
+        />
+      )}
     </>
   );
 };
